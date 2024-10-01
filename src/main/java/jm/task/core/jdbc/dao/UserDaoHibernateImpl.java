@@ -2,12 +2,9 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -34,7 +31,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
         }
     }
 
@@ -53,7 +49,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
         }
     }
 
@@ -68,7 +63,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
         }
     }
 
@@ -84,25 +78,27 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
         }
     }
 
     @Override
     public List<User> getAllUsers() {
         Transaction transaction = null;
-        List<User> users = null;
-        try(Session session = Util.getSessionFactory().openSession()) {
+        List<User> userList = null;
+        try (Session session = Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            users = session.createQuery("from User").getResultList();
+            Query<User> query = session.createQuery("from User", User.class);
+            userList = query.list();
+            for (User user : userList) {
+                System.out.println(user);
+            }
             transaction.commit();
-            System.out.println(users);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
-        } return users;
+        }
+        return userList;
     }
 
     @Override
@@ -118,7 +114,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if(transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
         }
     }
 }
